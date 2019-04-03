@@ -89,10 +89,6 @@ do_normalize_hostcc () {
 addtask normalize_hostcc before do_configure
 
 do_compile () {
-    unset CFLAGS CPPFLAGS CXXFLAGS LDFLAGS
-    . build/envsetup.sh
-    lunch celadon-userdebug
-    oe_runmake SPARSE_IMG=true project_celadon-efi
 }
 
 do_deploy () {
