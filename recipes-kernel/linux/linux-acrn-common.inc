@@ -3,9 +3,8 @@ DESCRIPTION = "Linux Kernel provided and supported by ACRN project"
 LICENSE = "GPLv2"
 LIC_FILES_CHKSUM = "file://COPYING;md5=bbea815ee2795b2f4230826c0c6b8814"
 
-SRC_URI = "git://github.com/projectacrn/acrn-kernel.git;protocol=git"
-
-SRCREV = "${AUTOREV}"
+SRC_URI = "git://github.com/projectacrn/acrn-kernel.git;nobranch=1"
+SRCREV = "6273870f3fcf87b1ab60fce5769b4740a1be1edc"
 
 inherit kernel
 
