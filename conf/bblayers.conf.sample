@@ -13,4 +13,5 @@ BBLAYERS ?= " \
   ##OEROOT##/../meta-acrn \
   ##OEROOT##/../meta-openembedded/meta-oe \
   ##OEROOT##/../meta-openembedded/meta-python \
+  ##OEROOT##/../meta-openembedded/meta-networking \
   "
