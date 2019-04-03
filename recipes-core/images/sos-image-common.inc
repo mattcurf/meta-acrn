@@ -11,6 +11,8 @@ CORE_IMAGE_EXTRA_INSTALL_append = " \
     acrn-tools \
     acrn-devicemodel \
     efibootmgr \
+    bridge-utils \
+    iproute2 \
 "
 
 do_rootfs[depends] += "${@' '.join([i + ':do_image_complete' for i in d.getVar('ACRN_LINUX_UOS_IMAGES').split()])}"
