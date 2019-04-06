@@ -6,7 +6,7 @@ REQUIRED_DISTRO_FEATURES = "systemd"
 
 DEPENDS = "systemd libevent openssl libxml2 libusb1 util-linux e2fsprogs"
 
-S = "${WORKDIR}/git/tools"
+S = "${WORKDIR}/git"
 
 EXTRA_OEMAKE += "SYSROOT=${STAGING_DIR_TARGET}"
 
@@ -22,8 +22,13 @@ FILES_${PN} += "${systemd_unitdir}/* ${libdir}/tmpfiles.d ${libdir}/acrn ${datad
 
 INSANE_SKIP_${PN} += "ldflags"
 
+do_compile () {
+    cd ${S}
+    oe_runmake tools
+}
+
 do_install () {
-    oe_runmake install DESTDIR=${D}
+    oe_runmake tools-install DESTDIR=${D}
 
     install -d ${D}/opt/acrn/conf
 

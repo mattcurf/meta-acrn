@@ -6,12 +6,12 @@ manager. It also defines a reference framework implementation for \
 virtual device emulation, called the "ACRN Device Model"."
 HOMEPAGE = "https://projectacrn.org"
 LICENSE = "BSD-3-Clause"
-LIC_FILES_CHKSUM = "file://${S}/../LICENSE;md5=5732af37bf18525ed9d2b16985054901"
+LIC_FILES_CHKSUM = "file://${S}/LICENSE;md5=5732af37bf18525ed9d2b16985054901"
 
-SRC_URI = "git://github.com/projectacrn/acrn-hypervisor.git"
+SRC_URI = "git://github.com/mattcurf/acrn-hypervisor.git"
 
-SRCREV = "8b64e336afd5c0f019175ea482e934a3d995ed8e"
-PV = "0.4+git${SRCPV}"
+SRCREV = "${AUTOREV}"
+PV = "0.7git${SRCPV}"
 
 UPSTREAM_CHECK_COMMITS = "1"
 

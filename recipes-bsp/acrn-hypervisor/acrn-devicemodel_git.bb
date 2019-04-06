@@ -10,7 +10,7 @@ REQUIRED_DISTRO_FEATURES = "systemd"
 
 DEPENDS = "systemd openssl libpciaccess acrn-tools python3-kconfiglib-native"
 
-S = "${WORKDIR}/git/devicemodel"
+S = "${WORKDIR}/git"
 
 EXTRA_OEMAKE += "SYSROOT=${STAGING_DIR_TARGET} TOOLS_OUT=${STAGING_DIR_TARGET}${includedir}/acrn"
 
@@ -24,8 +24,13 @@ SYSTEMD_SERVICE_${PN} = "acrn-guest@.service"
 
 FILES_${PN} += "${systemd_unitdir}/* ${datadir}/acrn/*"
 
+do_compile () {
+    cd ${S}
+    oe_runmake devicemodel
+}
+
 do_install () {
-    oe_runmake install DESTDIR=${D}
+    oe_runmake devicemodel-install DESTDIR=${D}
 
     install -d ${D}${systemd_unitdir}
     mv ${D}${libdir}/systemd/* ${D}${systemd_unitdir}/

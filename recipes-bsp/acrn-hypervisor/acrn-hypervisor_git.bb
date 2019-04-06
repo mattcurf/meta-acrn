@@ -4,7 +4,7 @@ inherit python3native cml1 deploy
 
 DEPENDS = "python3-pip-native python3-kconfiglib-native gnu-efi"
 
-S = "${WORKDIR}/git/hypervisor"
+S = "${WORKDIR}/git"
 B = "${S}/build"
 
 EXTRA_OEMAKE += "SYSROOT=${STAGING_DIR_TARGET}"
@@ -15,23 +15,19 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 FILES_${PN} += "${libdir}/acrn/* ${datadir}/acrn/*"
 
-do_configure_prepend () {
-    cd ${S}
-    oe_runmake defconfig BOARD=${MACHINE}
-
-    if [ "${ACRN_PLATFORM}" = "uefi" ]; then
-        sed -i -e 's#^\(CONFIG_UEFI_OS_LOADER_NAME=\).*$#\1\"\\\\EFI\\\\${ACRN_UEFI_OS_LOADER_DIR}\\\\${ACRN_UEFI_OS_LOADER_NAME}.efi\"#' ${B}/.config
-    fi
+do_configure () {
+    sed -i -e 's#org.clearlinux#${ACRN_UEFI_OS_LOADER_DIR}#g' ${S}/efi-stub/boot.c
+    sed -i -e 's#bootloaderx64.efi#${ACRN_UEFI_OS_LOADER_NAME}.efi#g' ${S}/efi-stub/boot.c
 }
 
 do_compile () {
     cd ${S}
-    oe_runmake
+    oe_runmake hypervisor BOARD=${MACHINE} PLATFORM=${ACRN_PLATFORM} 
 }
 
 do_install () {
     cd ${S}
-    oe_runmake install DESTDIR=${D}
+    oe_runmake hypervisor-install BOARD=${MACHINE} PLATFORM=${ACRN_PLATFORM} DESTDIR=${D}
 }
 
 do_deploy () {
