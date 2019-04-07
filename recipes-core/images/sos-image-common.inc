@@ -13,6 +13,10 @@ CORE_IMAGE_EXTRA_INSTALL_append = " \
     efibootmgr \
     bridge-utils \
     iproute2 \
+    docker \
+    docker-contrib \
+    connman \
+    connman-client \
 "
 
 do_rootfs[depends] += "${@' '.join([i + ':do_image_complete' for i in d.getVar('ACRN_LINUX_UOS_IMAGES').split()])}"

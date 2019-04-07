@@ -194,6 +194,26 @@ if [[ "$result" != "" ]]; then
   exit 1
 fi
 
+tap=tap0
+tap_exist=$(ip a | grep acrn_"$tap" | awk '{print $1}')
+if [ "$tap_exist"x != "x" ]; then
+  echo "tap device existed, reuse acrn_$tap"
+else
+  ip tuntap add dev acrn_$tap mode tap
+fi
+
+# if acrn-br0 exists, add VM's unique tap device under it
+br_exist=$(ip a | grep acrn-br0 | awk '{print $1}')
+if [ "$br_exist"x != "x" -a "$tap_exist"x = "x" ]; then
+  echo "acrn-br0 bridge aleady exists, adding new tap device to it..."
+  ip link set acrn_"$tap" master acrn-br0
+  ip link set dev acrn_"$tap" down
+  ip link set dev acrn_"$tap" up
+fi
+
+# WA for USB role switch hang issue, disable runtime PM of xHCI device
+echo on > /sys/devices/pci0000:00/0000:00:15.0/power/control
+
 #for memsize setting
 mem_size=2048M
 
@@ -201,8 +221,9 @@ acrn-dm -A -m $mem_size -c $2 -s 0:0,hostbridge -s 1:0,lpc -l com1,stdio \
   -s 2,pci-gvt -G "$3" \
   -s 5,virtio-console,@pty:pty_port \
   -s 6,virtio-hyper_dmabuf \
+  -s 7,xhci,1-3:cap=apl \
   -s 3,virtio-blk,/usr/share/acrn/images/linux/$1.img \
-  -s 4,virtio-net,tap0 \
+  -s 4,virtio-net,$tap \
   -k /usr/share/acrn/images/linux/bzImage \
   -B "root=/dev/vda2 rw rootwait maxcpus=$2 nohpet console=tty0 console=hvc0 \
   console=ttyS0 no_timer_check ignore_loglevel log_buf_len=16M \
@@ -232,7 +253,7 @@ if [[ "$major_ver" -lt "2" ]] || \
 fi
 
 # offline SOS CPUs except BSP before launch UOS
-for i in `ls -d /sys/devices/system/cpu/cpu[1-99]`; do
+for i in `ls -d /sys/devices/system/cpu/cpu[2-99]`; do
         online=`cat $i/online`
         idx=`echo $i | tr -cd "[1-99]"`
         echo cpu$idx online=$online
@@ -249,9 +270,9 @@ for i in `ls -d /sys/devices/system/cpu/cpu[1-99]`; do
 done
 
 if [ -e /usr/share/acrn/images/linux/$1.img ]; then
-    launch_linux_uos $1 1 "64 448 8" 0x070F00
+    launch_linux_uos $1 2 "64 448 8" 0x070F00
 fi
 
 if [ -e /usr/share/acrn/images/android/$1.img ]; then
-    launch_android_uos $1 3 "64 448 8" 0x070F00 android "AaaG" 1
+    launch_android_uos $1 2 "64 448 8" 0x070F00 android "AaaG" 1
 fi

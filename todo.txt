@@ -1,0 +1,9 @@
+1. [sos] disable bridge filtering
+echo 0 > /proc/sys/net/bridge/bridge-nf-call-iptables
+2. [uos] enable network dhcp
+[Match]
+Name=enp0s4
+
+[Network]
+DHCP=ipv4
+3. fix acrn-tools makefile version dependency
